@@ -55,10 +55,11 @@ public class WebSeriesService {
         avgRating = total/webSeriesList.size();
         productionHouse.setRatings(avgRating);
         productionHouseRepository.save(productionHouse);
+        WebSeries saved = webSeriesRepository.save(webSeries);
 
 
 
-        return webSeries.getId();
+        return saved.getId();
     }
 
 }

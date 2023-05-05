@@ -56,19 +56,26 @@ public class SubscriptionService {
         //update the subscription in the repository
 
         User user = userRepository.findById(userId).get();
+        Subscription subscription = user.getSubscription();
         int fareNeedToPay =0;
-        if(user.getSubscription().equals(SubscriptionType.ELITE))
+        if(user.getSubscription().getSubscriptionType().equals(SubscriptionType.ELITE))
         {
             throw new Exception("Already the best Subscription");
         }
 
-        if(user.getSubscription().equals(SubscriptionType.PRO)) {
+        else if(user.getSubscription().getSubscriptionType().equals(SubscriptionType.PRO)) {
             fareNeedToPay= (1000+ 350*user.getSubscription().getNoOfScreensSubscribed()) - user.getSubscription().getTotalAmountPaid();
+            subscription.setSubscriptionType(SubscriptionType.ELITE);
         }
-        if(user.getSubscription().equals(SubscriptionType.BASIC)) {
+        else if(user.getSubscription().getSubscriptionType().equals(SubscriptionType.BASIC)) {
             fareNeedToPay= (800+ 250*user.getSubscription().getNoOfScreensSubscribed()) - user.getSubscription().getTotalAmountPaid();
+            subscription.setSubscriptionType(SubscriptionType.PRO);
         }
-       return fareNeedToPay;
+
+        subscription.setTotalAmountPaid(fareNeedToPay);
+        user.setSubscription(subscription);
+        userRepository.save(user);
+        return fareNeedToPay;
     }
 
     public Integer calculateTotalRevenueOfHotstar(){
